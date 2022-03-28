@@ -1,8 +1,10 @@
-﻿using System.Api.Domain.Models.AppPools;
+﻿using System.Api.Domain.Models;
+using System.Api.Domain.Models.AppPools;
 using System.Api.Infrastructure.Interfaces.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Web.Administration;
 using Serilog;
 using UNC.Extensions.General;
@@ -13,8 +15,12 @@ namespace System.Api.Infrastructure.Services.Api
 {
     public class AppPoolService:ServiceBase, IAppPoolService
     {
-        public AppPoolService(ILogger logger) : base(logger)
+        private readonly SwaggerDefaultPathSettingModel _swaggerDefaults;
+
+
+        public AppPoolService(ILogger logger, System.Api.Domain.Models.SwaggerDefaultPathSettingModel swaggerDefaults) : base(logger)
         {
+            _swaggerDefaults = swaggerDefaults;
         }
 
         public Task<IResponse> GetAppPools()
@@ -68,6 +74,7 @@ namespace System.Api.Infrastructure.Services.Api
                     
                     foreach (var app in site.Applications)
                     {
+                        
                         list.Add(new SiteModel
                         {
                             Name = site.Name,
@@ -78,6 +85,8 @@ namespace System.Api.Infrastructure.Services.Api
                                 new ApplicationModel
                                 {
                                     Path = app.Path,
+                                    
+                                    SwaggerPath = $"{_swaggerDefaults.DefaultServicePath}{app.Path}/swagger/index.html",
                                     AppPool = new AppPoolStateModel
                                     {
                                         Name = app.ApplicationPoolName,

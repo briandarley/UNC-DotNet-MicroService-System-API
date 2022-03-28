@@ -1,14 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Api.Infrastructure.Pocos;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Security.Principal;
 using System.Api.Infrastructure.Services.Internals;
+using System.Collections.Generic;
+using System.Linq;
 using UNC.API.Base.Infrastructure;
+using UNC.Extensions.General;
 using UNC.HttpClient;
 using UNC.HttpClient.Interfaces;
 using UNC.HttpClient.Models;
 using UNC.Services;
 using UNC.Services.Infrastructure;
+using UNC.Services.Interfaces.Response;
 
 namespace System.Api.Api.Infrastructure
 {
@@ -32,7 +37,7 @@ namespace System.Api.Api.Infrastructure
             {
 
                 options.SwaggerDoc("iis", new OpenApiInfo { Title = "Iis Controller", Version = "v1", Description = "API Endpoints for managing IIS on server" });
-                
+
 
 
             });
@@ -87,7 +92,29 @@ namespace System.Api.Api.Infrastructure
                 return appResources;
 
             });
+            services.AddSingleton(cfg =>
+            {
+                var dataService = cfg.GetRequiredService<System.Api.Infrastructure.Interfaces.Services.IDalDataService>();
+                var settingsRequest = dataService.GetSettings();
 
+                settingsRequest.GetAwaiter().GetResult();
+
+                var settings = ((ICollectionResponse<Setting>)settingsRequest.Result).Entities;
+                return settings.ToList();
+            });
+            services.AddSingleton<System.Api.Domain.Models.SwaggerDefaultPathSettingModel>(cfg =>
+            {
+                var environment = configuration.GetSection("Environment").Value;
+                var settings = cfg.GetRequiredService<List<Setting>>();
+
+                var model = new System.Api.Domain.Models.SwaggerDefaultPathSettingModel();
+                var setting = settings.Single(c =>
+                    c.AppDomain.EqualsIgnoreCase("Environment")
+                    && c.Overload.EqualsIgnoreCase(environment)).Value;
+                model.DefaultServicePath = setting;
+                return model;
+
+            });
 
             RegisterInfrastructureDependencies(services);
         }
@@ -97,7 +124,7 @@ namespace System.Api.Api.Infrastructure
 
             services.AddSingleton<UNC.Services.Utilities.Encryption>();
             services.AddSingleton<System.Api.Application.Interfaces.IAppPoolService, System.Api.Application.Services.AppPoolService>();
-            
+
 
 
         }
