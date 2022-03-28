@@ -22,7 +22,27 @@ namespace System.Api.Application.Services
             {
                 LogBeginRequest();
 
+                var request = await _service.GetAppPools();
 
+                return request;
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+        }
+
+        public async Task<IResponse> GetSites()
+        {
+            try
+            {
+                LogBeginRequest();
+
+                return await _service.GetSites();
             }
             catch (Exception ex)
             {

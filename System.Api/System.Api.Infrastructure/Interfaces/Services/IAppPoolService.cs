@@ -6,5 +6,6 @@ namespace System.Api.Infrastructure.Interfaces.Services
     public interface IAppPoolService
     {
         Task<IResponse> GetAppPools();
+        Task<IResponse> GetSites();
     }
 }
