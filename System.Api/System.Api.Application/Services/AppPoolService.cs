@@ -53,5 +53,59 @@ namespace System.Api.Application.Services
                 LogEndRequest();
             }
         }
+
+        public async Task<IResponse> RestartPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                return await _service.RestartPool(name);
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+        }
+
+        public async Task<IResponse> StopPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                return await _service.StopPool(name);
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+        }
+
+        public async Task<IResponse> StartPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                return await _service.StartPool(name);
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+        }
     }
 }

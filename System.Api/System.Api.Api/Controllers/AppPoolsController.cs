@@ -46,5 +46,28 @@ namespace System.Api.Api.Controllers
             }
 
         }
+
+        [HttpPost, Route("{name}/restart")]
+        public async Task<IActionResult> RestartPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                var response = await _service.RestartPool(name);
+
+                return response.ToActionResult();
+
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+
+        }
     }
 }

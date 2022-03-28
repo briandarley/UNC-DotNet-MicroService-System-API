@@ -7,5 +7,8 @@ namespace System.Api.Infrastructure.Interfaces.Services
     {
         Task<IResponse> GetAppPools();
         Task<IResponse> GetSites();
+        Task<IResponse> RestartPool(string name);
+        Task<IResponse> StopPool(string name);
+        Task<IResponse> StartPool(string name);
     }
 }
