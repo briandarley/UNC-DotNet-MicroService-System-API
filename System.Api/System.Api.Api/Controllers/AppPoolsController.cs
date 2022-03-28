@@ -69,5 +69,51 @@ namespace System.Api.Api.Controllers
             }
 
         }
+
+        [HttpPost, Route("{name}/stop")]
+        public async Task<IActionResult> StopPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                var response = await _service.StopPool(name);
+
+                return response.ToActionResult();
+
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+
+        }
+
+        [HttpPost, Route("{name}/start")]
+        public async Task<IActionResult> StartPool(string name)
+        {
+            try
+            {
+                LogBeginRequest();
+
+                var response = await _service.StartPool(name);
+
+                return response.ToActionResult();
+
+            }
+            catch (Exception ex)
+            {
+                return LogException(ex, false);
+            }
+            finally
+            {
+                LogEndRequest();
+            }
+
+        }
     }
 }
