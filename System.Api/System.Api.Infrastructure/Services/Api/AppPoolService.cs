@@ -62,7 +62,37 @@ namespace System.Api.Infrastructure.Services.Api
                 var server = new ServerManager();
                 var sites = server.Sites;
 
-                return Task.FromResult((IResponse)CollectionResponse(sites.Select(c => c.Name).ToList()));
+                var list = new List<SiteModel>();
+                foreach (var site in sites)
+                {
+                    
+                    foreach (var app in site.Applications)
+                    {
+                        list.Add(new SiteModel
+                        {
+                            Name = site.Name,
+                            State = site.State.ToString(),
+
+                            Applications = new List<ApplicationModel>
+                            {
+                                new ApplicationModel
+                                {
+                                    Path = app.Path,
+                                    AppPool = new AppPoolStateModel
+                                    {
+                                        Name = app.ApplicationPoolName,
+                                        State = server.ApplicationPools.Single(c=> c.Name.Equals(app.ApplicationPoolName)).State.ToString()
+                                    }
+                                }
+                            }
+
+                        });
+                    }
+                    
+                }
+
+
+                return Task.FromResult((IResponse)CollectionResponse(list));
                 
 
             }
