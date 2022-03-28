@@ -1,4 +1,6 @@
-﻿using System.Api.Infrastructure.Interfaces.Services;
+﻿using System.Api.Domain.Models.AppPools;
+using System.Api.Infrastructure.Interfaces.Services;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Web.Administration;
@@ -20,7 +22,24 @@ namespace System.Api.Infrastructure.Services.Api
             {
                 LogBeginRequest();
 
-                return Task.FromResult((IResponse)SuccessResponse());
+
+                var server = new ServerManager();
+
+                var list = new List<AppPoolStateModel>();
+
+                foreach (var appPool in server.ApplicationPools)
+                {
+                    list.Add(new AppPoolStateModel
+                    {
+                        Name = appPool.Name,
+                        State = appPool.State.ToString(),
+                        
+                    });
+                }
+                
+
+                return Task.FromResult(CollectionResponse(list));
+               
 
             }
             catch (Exception ex)
